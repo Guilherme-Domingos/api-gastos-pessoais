@@ -1,0 +1,22 @@
+{
+  "name": "api-gastos-pessoais",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Aprendendo a fazer uma api NodeJs com Typescript",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "mysql2": "^3.11.3"
+  }
+}
