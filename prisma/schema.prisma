@@ -10,10 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Client {
+model User {
   id       String  @id @default(uuid())
   nome     String
   email    String  @unique
   telefone String
   endereco String?
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  data      DateTime
+  remetente String
+  categoria String
+  valor     Float
+  descricao String
+  tipo      String
 }
