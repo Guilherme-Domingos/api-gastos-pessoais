@@ -5,7 +5,7 @@
   "description": "Aprendendo a fazer uma api NodeJs com Typescript",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch --env-file .env src/main.ts"
+    "start": "tsx watch --env-file .env src/main.ts"
   },
   "keywords": [],
   "author": "",

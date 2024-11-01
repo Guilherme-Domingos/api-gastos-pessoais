@@ -1,1 +1,24 @@
-import express from "express"
+import express from 'express';
+import {UserController} from "../src/controllers/UserController"
+import {UserDao} from "../src/dao/UserDao"
+
+const app = express();
+app.use(express.json());
+const userController = new UserController();
+
+
+app.get('/users', (req, res) => 
+    userController.getAllUsers(req, res)
+);
+
+app.post('/registerUser', (req, res) =>
+    userController.registerUser(req, res)
+);
+
+
+
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+});
