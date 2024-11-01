@@ -1,6 +1,5 @@
 import express from 'express';
 import {UserController} from "../src/controllers/UserController"
-import {UserDao} from "../src/dao/UserDao"
 
 const app = express();
 app.use(express.json());
@@ -14,9 +13,6 @@ app.get('/users', (req, res) =>
 app.post('/registerUser', (req, res) =>
     userController.registerUser(req, res)
 );
-
-
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
