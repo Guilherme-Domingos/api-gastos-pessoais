@@ -16,6 +16,7 @@ model User {
   email    String  @unique
   telefone String
   endereco String?
+  senha    String
 }
 
 model Transaction {
