@@ -15,9 +15,14 @@ CREATE TABLE "Transaction" (
     "remetente" TEXT NOT NULL,
     "categoria" TEXT NOT NULL,
     "valor" REAL NOT NULL,
-    "descricao" TEXT NOT NULL,
-    "tipo" TEXT NOT NULL
+    "descricao" TEXT,
+    "tipo" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    CONSTRAINT "Transaction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE INDEX "Transaction_userId_idx" ON "Transaction"("userId");

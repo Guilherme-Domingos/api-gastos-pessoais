@@ -8,20 +8,25 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  nome     String
-  email    String  @unique
-  telefone String
-  endereco String?
-  senha    String
+  id           String        @id @default(cuid())
+  nome         String
+  email        String        @unique
+  telefone     String
+  endereco     String?
+  senha        String
+  transactions Transaction[]
 }
 
 model Transaction {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   data      DateTime
   remetente String
   categoria String
   valor     Float
-  descricao String
+  descricao String?
   tipo      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId]) // Índice opcional para otimizar as consultas por userId
 }

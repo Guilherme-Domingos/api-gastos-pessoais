@@ -6,7 +6,7 @@ export class UserDao {
     public async getAllUsers() {
         try {
             const users = await prisma.user.findMany();
-            return users; // Retorna a lista de usuários
+            return users; 
         } catch (error) {
             throw new Error(`Erro ao buscar usuários: ${error}`);
         }
@@ -23,7 +23,7 @@ export class UserDao {
                     senha: data.senha,
                 },
             });
-            return user; // Retorna o novo usuário
+            return user; 
         } catch (error) {
             throw new Error(`Erro ao registrar usuário: ${error}`);
         }
