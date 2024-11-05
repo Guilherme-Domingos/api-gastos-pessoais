@@ -8,7 +8,7 @@ export class TransactionDao{
             const transactions = await prisma.transaction.findMany();
             return transactions; 
         } catch (error) {
-            throw new Error(`Erro ao buscar transações: ${error}`);
+            throw new Error(`#Erro ao buscar transações: ${error}`);
         }
     }
 }
