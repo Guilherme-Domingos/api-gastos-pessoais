@@ -1,3 +1,6 @@
+import cuid from 'cuid';
+
+
 export class User{
     public readonly id: string;
     public readonly nome: string;
@@ -7,7 +10,7 @@ export class User{
     public readonly senha: string;
 
     constructor(nome: string, email: string, telefone: string, endereco: string, senha: string) {
-        this.id = crypto.randomUUID();
+        this.id = cuid();
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;  
