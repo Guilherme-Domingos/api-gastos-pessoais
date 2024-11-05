@@ -1,4 +1,4 @@
-export class  Transacao{
+export class Transacao{
     public readonly data: Date;
     public readonly rementente: string;
     public readonly categoria:  string;

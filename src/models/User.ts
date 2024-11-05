@@ -1,6 +1,5 @@
 import cuid from 'cuid';
 
-
 export class User{
     public readonly id: string;
     public readonly nome: string;

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UserDao } from '../dao/UserDao'; // Importe o DAO de Usuário
+import { UserDao } from '../dao/UserDao'; 
 
 const userDao = new UserDao();
 
@@ -15,7 +15,7 @@ export class UserController {
 
     public async registerUser(req: Request, res: Response): Promise<void> {
         try {
-            const newUser = await userDao.registerUser(req.body); // Passa os dados do corpo da requisição
+            const newUser = await userDao.registerUser(req.body); 
             res.status(201).json(newUser); 
         } catch (error) {
             res.status(500).json({ message: `Erro ao registrar usuário: ${error}` });
