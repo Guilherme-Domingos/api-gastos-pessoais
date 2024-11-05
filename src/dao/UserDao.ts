@@ -6,11 +6,9 @@ export class UserDao {
     public async getAllUsers() {
         try {
             const users = await prisma.user.findMany();
-<<<<<<< HEAD
+
             return users; // Retorna a lista de usuários
-=======
-            return users; 
->>>>>>> John
+
         } catch (error) {
             throw new Error(`Erro ao buscar usuários: ${error}`);
         }
@@ -27,18 +25,14 @@ export class UserDao {
                     senha: data.senha,
                 },
             });
-<<<<<<< HEAD
             return user; // Retorna o novo usuário
-=======
-            return user; 
->>>>>>> John
+
         } catch (error) {
             throw new Error(`Erro ao registrar usuário: ${error}`);
         }
     }
-<<<<<<< HEAD
-=======
 
+    
     public async updateUser(id: string, data: { nome: string; email: string; telefone: string; endereco: string; senha: string }) {
         try {
             const user = await prisma.user.update({
@@ -70,6 +64,4 @@ export class UserDao {
             throw new Error(`Erro ao deletar usuário: ${error}`);
         }
     }
-
->>>>>>> John
 }

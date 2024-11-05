@@ -21,8 +21,6 @@ export class UserController {
             res.status(500).json({ message: `Erro ao registrar usuário: ${error}` });
         }
     }
-<<<<<<< HEAD
-=======
 
     public async updateUser(req: Request, res: Response): Promise<void> {
         try{
@@ -41,5 +39,5 @@ export class UserController {
             res.status(500).json({ message: `Erro ao deletar usuário: ${error}` });
         }
     }
->>>>>>> John
+
 }
