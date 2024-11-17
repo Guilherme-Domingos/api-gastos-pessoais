@@ -14,6 +14,7 @@ model User {
   telefone    String
   endereco    String?
   senha       String
+  saldo       Float
   Transaction Transaction[]
 }
 
