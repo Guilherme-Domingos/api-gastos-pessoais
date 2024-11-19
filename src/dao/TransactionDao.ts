@@ -30,6 +30,7 @@ export class TransactionDao{
                     categoria: data.categoria,
                     valor: data.valor,
                     descricao: data.descricao,
+                    //Caso esteja recebendo, digite "Receita" no campo de tipo
                     tipo: data.tipo,
                     userId: data.userId,
                 }

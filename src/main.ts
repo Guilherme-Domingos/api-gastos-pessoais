@@ -1,5 +1,5 @@
 import { Api } from "./api/api";
-import {UserController} from "../src/controllers/UserController";
+import { UserController } from "../src/controllers/UserController";
 import { TransactionController } from "./controllers/TransactionController";
  
 const userController = new UserController();
