@@ -20,3 +20,10 @@ Transaction{
     "saldo" : 
     
 }
+
+
+# Migração pro dbeaver
+
+mysql://root:lab1@localhost:3306/gastospessoais
+
+npx prisma db push
