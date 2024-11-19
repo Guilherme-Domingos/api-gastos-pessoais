@@ -1,6 +1,6 @@
 # Gesso para cadastro de Usuários e Transações
 
-User{
+Transaction{
     "date": "2024-11-18T12:45:30Z",
     "remetente": "",
     "categoria": "",
@@ -10,7 +10,7 @@ User{
     "userId": ""
 }
 
-Transaction{
+User{
     
     "nome": "",
     "email": "",

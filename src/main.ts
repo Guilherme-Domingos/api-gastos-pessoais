@@ -21,8 +21,7 @@ function main(){
     api.addRota("/transaction/:id", "PUT", transactionController.updateTransaction)
     api.addRota("/transaction/:id", "DELETE", transactionController.deleteTransaction)
 
-
-api.start()
+    api.start()
 }
 main()
 

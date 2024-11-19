@@ -39,7 +39,7 @@ export class UserDao {
         }
     }
 
-    public async updateUser(id: string, data: { nome: string; email: string; telefone: string; endereco: string; senha: string }) {
+    public async updateUser(id: string, data: { nome: string; email: string; telefone: string; endereco: string; senha: string}) {
         try {
             const user = await prisma.user.update({
                 where: {
