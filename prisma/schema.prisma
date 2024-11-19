@@ -27,7 +27,7 @@ model Transaction {
   descricao String?
   tipo      String
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId]) // Índice opcional para otimizar as consultas por userId
 }

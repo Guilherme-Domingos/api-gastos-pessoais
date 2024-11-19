@@ -61,21 +61,11 @@ export class UserDao {
 
     public async deleteUser( id: string) {
         try{
-            const result = await prisma.$transaction(async (prisma) => {
-                // Primeiro, deletar as transações associadas ao usuário
-                await prisma.transaction.deleteMany({
-                    where: { userId: id },
-                });
-    
-                // Agora, deletar o usuário
-                const deletedUser = await prisma.user.delete({
-                    where: { id: id },
-                });
-    
-                return deletedUser;
+            const deletedUser = await prisma.user.delete({
+                where: { id },
             });
     
-            return result;
+            return deletedUser;
         }catch (error) {
             throw new Error(`Erro ao deletar usuário: ${error}`);
         }
