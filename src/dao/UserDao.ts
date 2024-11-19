@@ -5,14 +5,23 @@ const prisma = new PrismaClient();
 export class UserDao {
     public async getAllUsers() {
         try {
-            const users = await prisma.user.findMany();
-            return users; 
+            const user = await prisma.user.findMany();
+            return user; 
         } catch (error) {
             throw new Error(`Erro ao buscar usuários: ${error}`);
         }
     }
 
-    public async registerUser(data: { nome: string; email: string; telefone: string; endereco: string; senha: string }) {
+    public async getUserById(id: string) {
+        try {
+            const user = await prisma.user.findUnique({ where: { id } });
+            return user;
+        } catch (error) {
+            throw new Error(`Erro ao buscar usuário por ID: ${error}`);
+        }
+    }
+
+    public async registerUser(data: { nome: string; email: string; telefone: string; endereco: string; senha: string ; saldo: number}) {
         try {
             const user = await prisma.user.create({
                 data: {
@@ -21,6 +30,7 @@ export class UserDao {
                     telefone: data.telefone,
                     endereco: data.endereco,
                     senha: data.senha,
+                    saldo: data.saldo,
                 },
             });
             return user; 
@@ -51,13 +61,35 @@ export class UserDao {
 
     public async deleteUser( id: string) {
         try{
-            const user = await prisma.user.delete({
-                where: {
-                    id: id,
-                    }
+            const result = await prisma.$transaction(async (prisma) => {
+                // Primeiro, deletar as transações associadas ao usuário
+                await prisma.transaction.deleteMany({
+                    where: { userId: id },
                 });
+    
+                // Agora, deletar o usuário
+                const deletedUser = await prisma.user.delete({
+                    where: { id: id },
+                });
+    
+                return deletedUser;
+            });
+    
+            return result;
         }catch (error) {
             throw new Error(`Erro ao deletar usuário: ${error}`);
+        }
+    }
+
+    public async getUserTransaction(id: string){
+        try{
+            const userTransactions = await prisma.user.findUnique({
+                where: { id },
+                select: { transactions: true },
+            });
+            return userTransactions?.transactions;     	
+        }catch (error) {
+            throw new Error(`Erro ao buscar transações do usuário: ${error}`);
         }
     }
 
