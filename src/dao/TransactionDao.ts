@@ -14,7 +14,7 @@ export class TransactionDao{
 
     public async getIdTransaction(id: string){
         try{
-            const transaction= await prisma.transaction.findUnique({where: {id}});
+            const transaction = await prisma.transaction.findUnique({where: {id}});
             return transaction;
         }catch( erro){
             throw new Error(`Erro ao buscar transação por id: ${erro}`)
@@ -34,6 +34,19 @@ export class TransactionDao{
                     userId: data.userId,
                 }
             });
+
+            const ajusteSaldo = data.tipo === "Receita" ? data.valor : -data.valor;
+
+            // Atualiza o saldo do usuário
+            await prisma.user.update({
+                where: { id: data.userId },
+                data: {
+                    saldo: {
+                        increment: ajusteSaldo,
+                    },
+                },
+            });
+
             return transaction;
 
         }catch(error){
