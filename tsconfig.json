@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES6",                                  /* Define a versão do JavaScript emitida */
-    "module": "commonjs",                              /* Define o sistema de módulos como CommonJS */
-    "experimentalDecorators": true,                    /* Habilita o suporte para decoradores */
-    "emitDecoratorMetadata": true,                     /* Habilita a emissão de metadados de design para decoradores */
-    "esModuleInterop": true,                           /* Facilita a interoperabilidade com módulos CommonJS */
-    "forceConsistentCasingInFileNames": true,          /* Força a consistência de maiúsculas e minúsculas em nomes de arquivos */
-    "skipLibCheck": true,                              /* Ignora a checagem de tipos em bibliotecas */
-    "strict": true                                     /* Habilita todas as verificações estritas de tipo */
+    "target": "ES6",
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "noEmit": true 
   }
 }

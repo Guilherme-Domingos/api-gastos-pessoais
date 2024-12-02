@@ -29,8 +29,7 @@ export class UserDao {
                     email: data.email,
                     telefone: data.telefone,
                     endereco: data.endereco,
-                    senha: data.senha,
-                    saldo: data.saldo,
+                    senha: data.senha
                 },
             });
             return user; 

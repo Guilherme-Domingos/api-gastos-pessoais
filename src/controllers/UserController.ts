@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { UserDao } from '../dao/UserDao'; // Importe o DAO de Usuário
+import { UserListDto } from '../dto/user/RegisterDtoUser';
 
 const userDao = new UserDao();
 

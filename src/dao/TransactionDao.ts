@@ -25,7 +25,7 @@ export class TransactionDao{
         try{
             const transaction = await prisma.transaction.create({data: 
                 {
-                    date: data.date,
+                    date: new Date(),
                     remetente: data.remetente,
                     categoria: data.categoria,
                     valor: data.valor,
@@ -36,17 +36,17 @@ export class TransactionDao{
                 }
             });
 
-            const ajusteSaldo = data.tipo === "Receita" ? data.valor : -data.valor;
+            // const ajusteSaldo = data.tipo === "Receita" ? data.valor : -data.valor;
 
-            // Atualiza o saldo do usuário
-            await prisma.user.update({
-                where: { id: data.userId },
-                data: {
-                    saldo: {
-                        increment: ajusteSaldo,
-                    },
-                },
-            });
+            // // Atualiza o saldo do usuário
+            // await prisma.user.update({
+            //     where: { id: data.userId },
+            //     data: {
+            //         saldo: {
+            //             increment: ajusteSaldo,
+            //         },
+            //     },
+            // });
 
             return transaction;
 
