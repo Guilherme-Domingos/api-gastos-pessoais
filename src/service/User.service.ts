@@ -4,7 +4,6 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-
 export class UserService {
     private userDao: UserDao;
 
@@ -23,25 +22,31 @@ export class UserService {
                 email: userDto.email,
                 telefone: userDto.telefone,
                 endereco: userDto.endereco,
-                senha: userDto.senha
+                senha: userDto.senha,
             },
         });
         return user.id;
     }
 
-    public async list(): Promise<void>{
+    public async list(): Promise<UserListDto[]>{
         const users = await prisma.user.findMany();
-        return users; 
+        return users.map((user) => ({
+            id: user.id,
+            nome:user.nome,
+            email:user.email,
+            telefone:user.telefone,
+            endereco:user.endereco
+        })); 
         
     }
     
-    public async search(email: string): Promise<null>{
+    public async search(email: string): Promise<any | null>{
         try {
             const user = await prisma.user.findUnique({ where: { email } });
             return user;
         } catch (error) {
             console.error('Erro ao buscar usuário por ID:', error);
-            throw new Error(`Erro ao buscar usuário por ID: `);
+            throw new Error(`Erro ao buscar usuário por ID: ${error}`);
         }
     }
 }

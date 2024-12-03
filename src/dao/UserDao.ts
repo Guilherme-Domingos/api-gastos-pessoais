@@ -5,23 +5,23 @@ const prisma = new PrismaClient();
 export class UserDao {
     public async getAllUsers() {
         try {
-            const user = await prisma.user.findMany();
-            return user; 
+            return await prisma.user.findMany();
+            
         } catch (error) {
             throw new Error(`Erro ao buscar usuários: ${error}`);
         }
     }
 
-    public async getUserById(id: string) {
+    public async getUserById(email: string) {
         try {
-            const user = await prisma.user.findUnique({ where: { id } });
-            return user;
+            return await prisma.user.findUnique({ where: { email } });
+
         } catch (error) {
             throw new Error(`Erro ao buscar usuário por ID: ${error}`);
         }
     }
 
-    public async registerUser(data: { nome: string; email: string; telefone: string; endereco: string; senha: string ; saldo: number}) {
+    public async registerUser(data: { nome: string; email: string; telefone: string; endereco: string; senha: string }) {
         try {
             const user = await prisma.user.create({
                 data: {
@@ -37,13 +37,10 @@ export class UserDao {
             throw new Error(`Erro ao registrar usuário: ${error}`);
         }
     }
-
     public async updateUser(id: string, data: { nome: string; email: string; telefone: string; endereco: string; senha: string}) {
         try {
-            const user = await prisma.user.update({
-                where: {
-                    id: id,
-                },
+            return await prisma.user.update({
+                where: { id },
                 data: {
                     nome: data.nome,
                     email: data.email,
@@ -52,7 +49,7 @@ export class UserDao {
                     senha: data.senha,
                 },
             });
-            return user;
+             
         }catch (error) {
             throw new Error(`Erro ao atualizar usuário: ${error}`);
         }
@@ -60,11 +57,9 @@ export class UserDao {
 
     public async deleteUser( id: string) {
         try{
-            const deletedUser = await prisma.user.delete({
+            return await prisma.user.delete({
                 where: { id },
             });
-    
-            return deletedUser;
         }catch (error) {
             throw new Error(`Erro ao deletar usuário: ${error}`);
         }

@@ -13,21 +13,16 @@ export class RegisterDtoUser{
     @IsNotEmpty()
     nome: string;
 
-    @IsString()
     @IsEmail()
-    @IsNotEmpty()
     email: string;
 
     @IsString()
-    @IsNotEmpty()
     telefone: string;
 
-    @IsOptional() 
     @IsString()
-    endereco?: string;
+    endereco: string;
 
     @IsString()
-    @IsNotEmpty()
     senha: string;
     
 }
