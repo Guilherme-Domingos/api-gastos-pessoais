@@ -83,10 +83,10 @@ export class UserController {
         }
     }
 
-    public async getUserTransaction( req: Request, res: Response): Promise<void> {
+    public async getUserTransactions( req: Request, res: Response): Promise<void> {
         try{
-            const id = req.params.id
-            const userTransactions = await userDao.getUserTransaction(id);
+            const id = req.params.id;
+            const userTransactions = await this.userService.getUserTransactions(id);
         res.status(200).json(userTransactions);
         }catch (error) {
             res.status(500).json({ message: `Erro ao buscar transações do usuário: ${error}` });

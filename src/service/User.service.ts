@@ -49,4 +49,8 @@ export class UserService {
             throw new Error(`Erro ao buscar usuário por ID: ${error}`);
         }
     }
+
+    public async getUserTransactions(id: string) {
+        return await this.userDao.getUserTransactions(id);
+    }
 }

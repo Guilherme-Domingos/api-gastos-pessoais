@@ -65,7 +65,7 @@ export class UserDao {
         }
     }
 
-    public async getUserTransaction(id: string){
+    public async getUserTransactions(id: string){
         try{
             const userTransactions = await prisma.user.findUnique({
                 where: { id },
