@@ -1,5 +1,4 @@
 import { IsString, IsDateString, IsOptional, IsNumber, IsEnum } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
 
 export type TransactionListDtio = {
     date: string;

@@ -1,11 +1,15 @@
-
 import { IsString, IsNotEmpty, IsEmail, IsOptional } from "class-validator";
-import { Type } from 'class-transformer';
 
 export type UserListDto = {
     id: string,
     nome: string,
     email: string 
+}
+
+export class UserResponseDto{
+    id: string
+    nome: string
+    email: string
 }
 
 export class RegisterDtoUser{
@@ -19,8 +23,9 @@ export class RegisterDtoUser{
     @IsString()
     telefone: string;
 
+    @IsOptional()
     @IsString()
-    endereco: string;
+    endereco?: string;
 
     @IsString()
     senha: string;

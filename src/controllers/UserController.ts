@@ -1,95 +1,95 @@
 import { Request, Response } from 'express';
-import { UserService } from '../service/User.service';
-import { plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
-import { RegisterDtoUser } from '../dto/user/RegisterDtoUser';
+import UserService from '../service/User.service';
 
-export class UserController {
+class UserController {
 
-    private userService = UserService.build();
+    private userService = new UserService();
 
-    public async getAllUsers(req: Request, res: Response): Promise<void> {
+    async getAllUsers(req: Request, res: Response){
         try {
-            const users = await this.userService.list(); 
-            res.status(200).json(users); 
-        } catch (error) {
-            res.status(500).json({ message: `Erro ao buscar usuários: ${error}` });
+            const users = await this.userService.getAllUsers(); 
+            return res.status(200).json(users); 
+        } catch (error: any) {
+            res.status(500).json({ error: `Erro ao buscar usuários.` });
         }
     }
 
-    public async getUserByEmail(req: Request, res: Response): Promise<void> {
+    async getUserByEmail(req: Request, res: Response){
         try {
-            const email = req.params.email;
-            const user = await this.userService.search(email);
+            const { email } = req.query;
+
+            if (!email || typeof email !== 'string') {
+                return res.status(400).json({ message: "Email inválido" });
+            }
+
+            const user = await this.userService.getUserByEmail({email});
+            return res.status(200).json(user);
+        } catch (error: any) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async getUserById(req: Request, res: Response){
+        try {
+            const { id } = req.params;
+
+            if (!id || typeof id !== 'string') {
+                return res.status(400).json({ message: "ID inválido." });
+            }
+
+            const user = await this.userService.getUserById({id});
+
             if (!user) {
-                res.status(404).json({ message: `Usuário não encontrado com o ID ${email}`});
+                res.status(404).json({ message: `Usuário não  encontrado com o ID ${id}`});
             }
+
             res.status(200).json(user);
-        } catch (error) {
-            res.status(500).json({ message: `Erro ao buscar usuário: ${error}` });
+        } catch (error: any) {
+            res.status(500).json({ error: `Erro ao buscar usuário.` });
         }
     }
 
-    public async registerUser( req: Request, res: Response): Promise<void> {
+    async registerUser( req: Request, res: Response){
         try {
-            const userDto = plainToInstance(RegisterDtoUser, req.body);
+            const newUser = await  this.userService.registerUser(req.body);
+            return res.status(201).json(newUser);
 
-            // Validando o DTO
-            const errors = await validate(userDto);
-            if (errors.length > 0) {
-                res.status(400).json({ message: 'Dados inválidos', errors });
-                return;
-            }
-
-            const newUserId = await this.userService.save(userDto); 
-            res.status(201).json({ message: 'Usuário registrado com sucesso', id: newUserId });
-        } catch (error) {
-            res.status(500).json({ message: `Erro ao registrar usuário: ${error}` });
+        } catch (error: any) {
+            res.status(400).json({error: error.message });
         }
     }
 
-    public async updateUser( req: Request, res: Response): Promise<void> {
+    public async updateUser( req: Request, res: Response){
         try{
-            const email = req.params.email;
-            const updatedUser = await this.userService.search(email);
-            if (!updatedUser) {
-                res.status(404).json({ message: `Usuário não encontrado com o email ${email}` });
-                return;
-            }
+            const { id } = req.params;
+            const updatedUser = await this.userService.updateUser(id, req.body);
+            
 
-            const updatedData = req.body;
-            await this.userService.save(updatedData); // Use the save method to update
             res.status(200).json({ message: 'Usuário atualizado com sucesso' });
-
-        }catch(error){
+        }catch(error: any){
             res.status(500).json({ message: `Erro ao atualizar usuário: ${error}` });
         }
     }
 
-    public async deleteUser( req: Request, res: Response): Promise<void> {
+    public async deleteUser( req: Request, res: Response){
         try {
-            const email = req.params.email;
-            const deletedUser = await this.userService.search(email);
+            const { id } = req.params;
+            return await this.userService.deleteUser({id});
             
-            if (!deletedUser) {
-                res.status(404).json({ message: "Usuário não encontrado" });
-                return;
-            }
-
-            await this.userService.save({ ...deletedUser, ativo:false})
+            
             res.status(200).json({ message: 'Usuário deletado com sucesso' });
-        }catch (error) {
+        }catch (error: any) {
             res.status(500).json({ message: `Erro ao deletar usuário: ${error}` });
         }
     }
 
-    public async getUserTransactions( req: Request, res: Response): Promise<void> {
-        try{
-            const id = req.params.id;
-            const userTransactions = await this.userService.getUserTransactions(id);
-        res.status(200).json(userTransactions);
-        }catch (error) {
-            res.status(500).json({ message: `Erro ao buscar transações do usuário: ${error}` });
-        }
-    }
+    // public async getUserTransactions( req: Request, res: Response){
+    //     try{
+    //         const id = req.params.id;
+    //         const userTransactions = await this.userService.getUserTransactions(id);
+    //     res.status(200).json(userTransactions);
+    //     }catch (error: any) {
+    //         res.status(500).json({ message: `Erro ao buscar transações do usuário: ${error}` });
+    //     }
+    // }
 }

@@ -1,56 +1,92 @@
+import { plainToClass } from "class-transformer";
+import { validateOrReject } from "class-validator";
+
 import { UserDao } from "../dao/UserDao";
-import { UserListDto, RegisterDtoUser } from "../dto/user/RegisterDtoUser";
-import { PrismaClient } from "@prisma/client";
+import { getDtoUserId, getDtoUserEmail } from "../dto/user/UserDto"
+import { RegisterDtoUser, UserResponseDto, UserListDto } from "../dto/user/RegisterDtoUser";
+import { UpdateDtoUser } from "../dto/user/UpdateDtoUser";
+import { DeleteUserDto } from "../dto/user/DeleteUserDto";
 
-const prisma = new PrismaClient();
 
-export class UserService {
-    private userDao: UserDao;
 
-    private constructor(userDao: UserDao) {
-        this.userDao = userDao;
-    }
+class UserService{
 
-    public static build(){
-        return new UserService(new UserDao())
-    }
-
-    public async save(userDto: RegisterDtoUser): Promise<string>{
-        const user = await prisma.user.create({
-            data: {
-                nome: userDto.nome,
-                email: userDto.email,
-                telefone: userDto.telefone,
-                endereco: userDto.endereco,
-                senha: userDto.senha,
-            },
-        });
-        return user.id;
-    }
-
-    public async list(): Promise<UserListDto[]>{
-        const users = await prisma.user.findMany();
+    async getAllUsers(): Promise<UserListDto[]>{
+        const users = await UserDao.getAllUsers();
         return users.map((user) => ({
             id: user.id,
-            nome:user.nome,
-            email:user.email,
-            telefone:user.telefone,
-            endereco:user.endereco
-        })); 
-        
-    }
-    
-    public async search(email: string): Promise<any | null>{
-        try {
-            const user = await prisma.user.findUnique({ where: { email } });
-            return user;
-        } catch (error) {
-            console.error('Erro ao buscar usuário por ID:', error);
-            throw new Error(`Erro ao buscar usuário por ID: ${error}`);
-        }
+            nome: user.nome,
+            email: user.email,
+        }));
     }
 
-    public async getUserTransactions(id: string) {
-        return await this.userDao.getUserTransactions(id);
+    async getUserById(data: getDtoUserId){
+        const dtoInstance = plainToClass(getDtoUserId, data);
+        await validateOrReject(dtoInstance);
+
+        const existingUser = await UserDao.getUserById(data.id);
+        if (existingUser) {
+            throw new Error("Email já cadastrado.");
+        }
+        return existingUser;
+    }
+
+    async getUserByEmail(data: getDtoUserEmail){
+        const dtoInstance = plainToClass(getDtoUserEmail, data);
+        await validateOrReject(dtoInstance);
+
+        const existingUser = await UserDao.getUserByEmail(data.email);
+        if (existingUser) {
+            throw new Error("Email já cadastrado.");
+        }
+        return existingUser;
+
+    }
+    async registerUser(data: RegisterDtoUser): Promise<UserResponseDto> {
+        const dtoInstance = plainToClass(RegisterDtoUser, data);
+        await validateOrReject(dtoInstance);
+
+        const existingUser = await UserDao.registerUser(data);
+        if (existingUser){
+            throw new Error("Email já cadastrado.");
+        }
+
+        const newUser = await UserDao.registerUser({
+            nome: data.nome,
+            email: data.email,
+            endereco: data.endereco,
+            senha: data.senha,
+            telefone: data.telefone,
+
+        });
+
+        return newUser
+    }
+
+    async updateUser(id: string, data: Partial<UpdateDtoUser>): Promise<UserResponseDto>{
+        const dtoInstance = plainToClass(UpdateDtoUser, data);
+        await validateOrReject(dtoInstance);
+
+        const existingUser = await UserDao.getUserById(id);
+        if (existingUser){
+            throw new Error("Usuário não encontrado.");
+        }
+
+        const updateUser = await UserDao.updateUser(id, data);
+        return updateUser;
+    }
+
+    async deleteUser(data: DeleteUserDto): Promise<void>{
+        const dtoInstance = plainToClass(DeleteUserDto, data);
+        await validateOrReject(dtoInstance);
+
+        const existingUser = await UserDao.deleteUser(data.id);
+        if (existingUser){
+            throw new Error("Usuário não encontrado.");
+        }
+
+        await UserDao.deleteUser(data.id);
     }
 }
+
+export default UserService;

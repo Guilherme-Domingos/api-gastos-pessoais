@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export class UserDao {
-    public async getAllUsers() {
+    static async getAllUsers() {
         try {
             return await prisma.user.findMany();
             
@@ -12,7 +12,7 @@ export class UserDao {
         }
     }
 
-    public async getUserById(email: string) {
+    static async getUserByEmail(email: string) {
         try {
             return await prisma.user.findUnique({ where: { email } });
 
@@ -21,41 +21,38 @@ export class UserDao {
         }
     }
 
-    public async registerUser(data: { nome: string; email: string; telefone: string; endereco: string; senha: string }) {
+    static async getUserById(id: string) {
         try {
-            const user = await prisma.user.create({
-                data: {
-                    nome: data.nome,
-                    email: data.email,
-                    telefone: data.telefone,
-                    endereco: data.endereco,
-                    senha: data.senha
-                },
+            return await prisma.user.findUnique({ where: { id } });
+
+        } catch (error) {
+            throw new Error(`Erro ao buscar usuário por ID: ${error}`);
+        }
+    }
+
+    static async registerUser(data: { nome: string; email: string; telefone: string; endereco?: string; senha: string }) {
+        try {
+            return await prisma.user.create({
+                data,     
             });
-            return user; 
+             
         } catch (error) {
             throw new Error(`Erro ao registrar usuário: ${error}`);
         }
     }
-    public async updateUser(id: string, data: { nome: string; email: string; telefone: string; endereco: string; senha: string}) {
+    static async updateUser(id: string, data: Partial<{ nome: string; email: string; telefone: string; endereco: string; senha: string}>) {
         try {
             return await prisma.user.update({
                 where: { id },
-                data: {
-                    nome: data.nome,
-                    email: data.email,
-                    telefone: data.telefone,
-                    endereco: data.endereco,
-                    senha: data.senha,
-                },
-            });
+                data,
+              });
              
         }catch (error) {
             throw new Error(`Erro ao atualizar usuário: ${error}`);
         }
     }
 
-    public async deleteUser( id: string) {
+    static async deleteUser( id: string) {
         try{
             return await prisma.user.delete({
                 where: { id },
@@ -65,7 +62,7 @@ export class UserDao {
         }
     }
 
-    public async getUserTransactions(id: string){
+    static async getUserTransactions(id: string){
         try{
             const userTransactions = await prisma.user.findUnique({
                 where: { id },
