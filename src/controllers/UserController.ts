@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import UserService from '../service/User.service';
-
+import { RegisterDtoUser } from '../dto/user/RegisterDtoUser';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 class UserController {
 
     private userService = new UserService();
@@ -9,6 +11,7 @@ class UserController {
         try {
             const users = await this.userService.getAllUsers(); 
             return res.status(200).json(users); 
+
         } catch (error: any) {
             res.status(500).json({ error: `Erro ao buscar usuários.` });
         }
@@ -51,8 +54,17 @@ class UserController {
 
     async registerUser( req: Request, res: Response){
         try {
-            const newUser = await  this.userService.registerUser(req.body);
-            return res.status(201).json(newUser);
+            const user = plainToInstance(RegisterDtoUser, req.body);
+
+            const errors = await validate(user);
+
+            if (errors.length > 0) {
+                return res.status(400).json({ error: "Erro de validação", details: errors });
+            }
+
+            const newUser = await  this.userService.registerUser(user);
+
+            return res.status(201).json({message: `Usuário registrado com sucesso`,user: newUser,});
 
         } catch (error: any) {
             res.status(400).json({error: error.message });
@@ -63,9 +75,7 @@ class UserController {
         try{
             const { id } = req.params;
             const updatedUser = await this.userService.updateUser(id, req.body);
-            
-
-            res.status(200).json({ message: 'Usuário atualizado com sucesso' });
+            return res.status(200).json({ message: 'Usuário atualizado com sucesso',user: updatedUser });
         }catch(error: any){
             res.status(500).json({ message: `Erro ao atualizar usuário: ${error}` });
         }
@@ -74,22 +84,26 @@ class UserController {
     public async deleteUser( req: Request, res: Response){
         try {
             const { id } = req.params;
-            return await this.userService.deleteUser({id});
+            const deleteUser= await this.userService.deleteUser({id});
+            return res.status(200).json({message: `Usuário com o ID ${id} foi deletado com sucesso`});
             
-            
-            res.status(200).json({ message: 'Usuário deletado com sucesso' });
         }catch (error: any) {
-            res.status(500).json({ message: `Erro ao deletar usuário: ${error}` });
+            res.status(500).json({ message: `Erro ao deletar usuário: ${error.message}` });
         }
     }
 
     // public async getUserTransactions( req: Request, res: Response){
     //     try{
-    //         const id = req.params.id;
+    //         const { id } = req.params;
+
+    //         if (!id || typeof id !== 'string') {
+    //             return res.status(400).json({ message: "ID inválido." });
+    //         }
+
     //         const userTransactions = await this.userService.getUserTransactions(id);
     //     res.status(200).json(userTransactions);
     //     }catch (error: any) {
-    //         res.status(500).json({ message: `Erro ao buscar transações do usuário: ${error}` });
+    //         res.status(500).json({ message: `Erro ao buscar transações do usuário: ${error.message}` });
     //     }
     // }
 }

@@ -1,4 +1,6 @@
 import { plainToClass } from "class-transformer";
+import { plainToInstance } from "class-transformer";
+
 import { validateOrReject } from "class-validator";
 
 import { UserDao } from "../dao/UserDao";
@@ -25,8 +27,8 @@ class UserService{
         await validateOrReject(dtoInstance);
 
         const existingUser = await UserDao.getUserById(data.id);
-        if (existingUser) {
-            throw new Error("Email já cadastrado.");
+        if (!existingUser) {
+            throw new Error("Usuário não encontrado.");
         }
         return existingUser;
     }
@@ -36,29 +38,23 @@ class UserService{
         await validateOrReject(dtoInstance);
 
         const existingUser = await UserDao.getUserByEmail(data.email);
-        if (existingUser) {
-            throw new Error("Email já cadastrado.");
+        if (!existingUser) {
+            throw new Error("Usuário não encontrado.");
         }
         return existingUser;
 
     }
     async registerUser(data: RegisterDtoUser): Promise<UserResponseDto> {
+
         const dtoInstance = plainToClass(RegisterDtoUser, data);
         await validateOrReject(dtoInstance);
 
-        const existingUser = await UserDao.registerUser(data);
+        const existingUser = await UserDao.getUserByEmail(data.email);
         if (existingUser){
             throw new Error("Email já cadastrado.");
         }
 
-        const newUser = await UserDao.registerUser({
-            nome: data.nome,
-            email: data.email,
-            endereco: data.endereco,
-            senha: data.senha,
-            telefone: data.telefone,
-
-        });
+        const newUser = await UserDao.registerUser(dtoInstance);
 
         return newUser
     }
@@ -68,7 +64,7 @@ class UserService{
         await validateOrReject(dtoInstance);
 
         const existingUser = await UserDao.getUserById(id);
-        if (existingUser){
+        if (!existingUser){
             throw new Error("Usuário não encontrado.");
         }
 
@@ -81,12 +77,18 @@ class UserService{
         await validateOrReject(dtoInstance);
 
         const existingUser = await UserDao.deleteUser(data.id);
-        if (existingUser){
+        if (!existingUser){
             throw new Error("Usuário não encontrado.");
         }
 
         await UserDao.deleteUser(data.id);
     }
+
+    // async getUserTransactions(req: Request, res: Response): Promise<void> {
+    //     const id = req.params.id;
+    //     const transactions = await UserDao.getUserTransactions(id);
+    //     res.json(transactions);
+    // }
 }
 
 export default UserService;

@@ -30,23 +30,10 @@ export class TransactionDao{
                     categoria: data.categoria,
                     valor: data.valor,
                     descricao: data.descricao,
-                    //Caso esteja recebendo, digite "Receita" no campo de tipo
                     tipo: data.tipo,
                     userId: data.userId,
                 }
             });
-
-            // const ajusteSaldo = data.tipo === "Receita" ? data.valor : -data.valor;
-
-            // // Atualiza o saldo do usuário
-            // await prisma.user.update({
-            //     where: { id: data.userId },
-            //     data: {
-            //         saldo: {
-            //             increment: ajusteSaldo,
-            //         },
-            //     },
-            // });
 
             return transaction;
 
