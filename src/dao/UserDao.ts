@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { RegisterDtoUser } from '../dto/user/RegisterDtoUser';
+import { UpdateDtoUser } from '../dto/user/UpdateDtoUser';
+import { getDtoUserId } from '../dto/user/UserDto';
 
 const prisma = new PrismaClient();
 
@@ -39,11 +41,11 @@ export class UserDao {
             throw new Error(`Erro ao registrar usuário: ${error}`);
         }
     }
-    static async updateUser(id: string, data: Partial<{ nome: string; email: string; telefone: string; endereco: string; senha: string}>) {
+    static async updateUser(id: getDtoUserId, user : UpdateDtoUser) {
         try {
             return await prisma.user.update({
-                where: { id },
-                data,
+                where: id,
+                data: user,
             });
              
         }catch (error) {

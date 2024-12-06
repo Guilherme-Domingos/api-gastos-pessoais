@@ -4,11 +4,12 @@ import { plainToInstance } from "class-transformer";
 import { validateOrReject } from "class-validator";
 
 import { UserDao } from "../dao/UserDao";
-import { getDtoUserId, getDtoUserEmail } from "../dto/user/UserDto"
+
 import { RegisterDtoUser, UserResponseDto, UserListDto } from "../dto/user/RegisterDtoUser";
 import { UpdateDtoUser } from "../dto/user/UpdateDtoUser";
-import { DeleteUserDto } from "../dto/user/DeleteUserDto";
-
+import { DeleteUserDto } from "../dto/user/DeleteDtoUser";
+import { getEmailDtoUser } from "../dto/user/GetEmailDtoUser";
+import { getIdDtoUser } from "../dto/user/GetIdDtoUser";
 
 
 class UserService{
@@ -22,8 +23,8 @@ class UserService{
         }));
     }
 
-    async getUserById(data: getDtoUserId){
-        const dtoInstance = plainToClass(getDtoUserId, data);
+    async getUserById(data: getIdDtoUser){
+        const dtoInstance = plainToClass(getIdDtoUser, data);
         await validateOrReject(dtoInstance);
 
         const existingUser = await UserDao.getUserById(data.id);
@@ -33,8 +34,8 @@ class UserService{
         return existingUser;
     }
 
-    async getUserByEmail(data: getDtoUserEmail){
-        const dtoInstance = plainToClass(getDtoUserEmail, data);
+    async getUserByEmail(data: getEmailDtoUser){
+        const dtoInstance = plainToClass(getEmailDtoUser, data);
         await validateOrReject(dtoInstance);
 
         const existingUser = await UserDao.getUserByEmail(data.email);
@@ -56,10 +57,11 @@ class UserService{
 
         const newUser = await UserDao.registerUser(dtoInstance);
 
-        return newUser
+        return newUser;
     }
 
     async updateUser(id: string, data: Partial<UpdateDtoUser>): Promise<UserResponseDto>{
+
         const dtoInstance = plainToClass(UpdateDtoUser, data);
         await validateOrReject(dtoInstance);
 
@@ -68,7 +70,8 @@ class UserService{
             throw new Error("Usuário não encontrado.");
         }
 
-        const updateUser = await UserDao.updateUser(id, data);
+        const updateUser = await UserDao.updateUser(id, dtoInstance);
+
         return updateUser;
     }
 

@@ -1,5 +1,5 @@
 import { Api } from "./api/api";
-import { UserController } from "../src/controllers/UserController";
+import { UserController } from "./controllers/UserController";
 import { TransactionController } from "./controllers/TransactionController";
  
 const userController = new UserController();
@@ -13,7 +13,7 @@ function main(){
     api.addRota("/user", "POST", userController.registerUser)
     api.addRota("/user/:id", "PUT", userController.updateUser)
     api.addRota("/user/:id", "DELETE", userController.deleteUser)
-    api.addRota("/userTransaction/:id", "GET", userController.getUserTransactions)
+    // api.addRota("/userTransaction/:id", "GET", userController.getUserTransactions)
 
     api.addRota("/transaction", "GET", transactionController.getAllTransactions)
     api.addRota("/transaction/:id", "GET", transactionController.getIdTransaction)
