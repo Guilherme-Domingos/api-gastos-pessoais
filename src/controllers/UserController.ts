@@ -9,7 +9,7 @@ import { getIdDtoUser } from '../dto/user/GetIdDtoUser';
 import { getEmailDtoUser } from '../dto/user/GetEmailDtoUser';
 import { RegisterDtoUser } from '../dto/user/RegisterDtoUser';
 import { UpdateDtoUser } from '../dto/user/UpdateDtoUser';
-import { DeleteDtoUser } from '../dto/user/DeleteDtoUser';
+import { DeleteUserDto } from '../dto/user/DeleteDtoUser';
 
 export class UserController {
 
@@ -94,7 +94,7 @@ export class UserController {
                 return res.status(400).json({ error: "Erro de validação", details: errors });
             }
 
-            const upUser = await this.userService.updateUser({id}, user);
+            const upUser = await this.userService.updateUser(id, user);
 
             return res.status(200).json({ message: 'Usuário atualizado com sucesso',user: upUser });
 
@@ -107,7 +107,7 @@ export class UserController {
         try {
             const { id } = req.params;
             
-            const user = plainToInstance(DeleteDtoUser, id);
+            const user = plainToInstance(DeleteUserDto, id);
 
             const errors = await validate(user)
 
