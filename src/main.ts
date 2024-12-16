@@ -9,11 +9,12 @@ function main(){
     const api = Api.build()
 
     api.addRota("/user", "GET", userController.getAllUsers)
-    api.addRota("/user/:id", "GET", userController.getUserByEmail)
+    api.addRota("/user/:id", "GET", userController.getUserById)
     api.addRota("/user", "POST", userController.registerUser)
     api.addRota("/user/:id", "PUT", userController.updateUser)
     api.addRota("/user/:id", "DELETE", userController.deleteUser)
-    // api.addRota("/userTransaction/:id", "GET", userController.getUserTransactions)
+    api.addRota("/userTransaction/:id", "GET", userController.getUserTransactions)
+    api.addRota("/userBalance/:id", "GET", userController.getUserBalance)
 
     api.addRota("/transaction", "GET", transactionController.getAllTransactions)
     api.addRota("/transaction/:id", "GET", transactionController.getIdTransaction)

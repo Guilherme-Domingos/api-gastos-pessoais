@@ -1,12 +1,17 @@
 import { IsString, IsDateString, IsOptional, IsNumber, IsEnum } from 'class-validator';
 
-export type TransactionListDtio = {
+export type TransactionListDto = {
     date: string;
     remetente: string;
     categoria: string;
     valor: number;
-    descricao?: string;
     tipo: 'Receita' | 'Despesa';
+}
+
+export type UserBalance = {
+    id:string;
+    remetente: string;
+    valor: number;
 }
 
 export class RegisterDtoTransaction {

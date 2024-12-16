@@ -1,5 +1,4 @@
 import { plainToClass } from "class-transformer";
-import { plainToInstance } from "class-transformer";
 
 import { validateOrReject } from "class-validator";
 
@@ -9,12 +8,13 @@ import { RegisterDtoUser, UserResponseDto, UserListDto } from "../dto/user/Regis
 import { UpdateDtoUser } from "../dto/user/UpdateDtoUser";
 import { DeleteUserDto } from "../dto/user/DeleteDtoUser";
 import { getEmailDtoUser } from "../dto/user/GetEmailDtoUser";
-import { getIdDtoUser } from "../dto/user/GetIdDtoUser";
+import { GetIdDtoUser } from "../dto/user/GetIdDtoUser";
+import { TransactionListDto, UserBalance } from "../dto/transaction/RegisterDtoTransaction";
 
 
 class UserService{
 
-    async getAllUsers(): Promise<UserListDto[]>{
+    static async getAllUsers(): Promise<UserListDto[]>{
         const users = await UserDao.getAllUsers();
         return users.map((user) => ({
             id: user.id,
@@ -23,34 +23,34 @@ class UserService{
         }));
     }
 
-    async getUserById(data: getIdDtoUser){
-        const dtoInstance = plainToClass(getIdDtoUser, data);
+    static async getUserById(data: GetIdDtoUser){
+        const dtoInstance = plainToClass(GetIdDtoUser, data);
         await validateOrReject(dtoInstance);
 
-        const existingUser = await UserDao.getUserById(data.id);
+        const existingUser = await UserDao.getUserById(data);
         if (!existingUser) {
             throw new Error("Usuário não encontrado.");
         }
         return existingUser;
     }
 
-    async getUserByEmail(data: getEmailDtoUser){
+    static async getUserByEmail(data: getEmailDtoUser){
         const dtoInstance = plainToClass(getEmailDtoUser, data);
         await validateOrReject(dtoInstance);
 
-        const existingUser = await UserDao.getUserByEmail(data.email);
+        const existingUser = await UserDao.getUserByEmail(data);
         if (!existingUser) {
             throw new Error("Usuário não encontrado.");
         }
         return existingUser;
 
     }
-    async registerUser(data: RegisterDtoUser): Promise<UserResponseDto> {
+    static async registerUser(data: RegisterDtoUser): Promise<UserResponseDto> {
 
         const dtoInstance = plainToClass(RegisterDtoUser, data);
         await validateOrReject(dtoInstance);
 
-        const existingUser = await UserDao.getUserByEmail(data.email);
+        const existingUser = await UserDao.getUserByEmail(data);
         if (existingUser){
             throw new Error("Email já cadastrado.");
         }
@@ -60,7 +60,7 @@ class UserService{
         return newUser;
     }
 
-    async updateUser(id: string, data: Partial<UpdateDtoUser>): Promise<UserResponseDto>{
+    static async updateUser(id: GetIdDtoUser, data: Partial<UpdateDtoUser>): Promise<UserResponseDto>{
 
         const dtoInstance = plainToClass(UpdateDtoUser, data);
         await validateOrReject(dtoInstance);
@@ -75,7 +75,7 @@ class UserService{
         return updateUser;
     }
 
-    async deleteUser(data: DeleteUserDto): Promise<void>{
+    static async deleteUser(data: DeleteUserDto): Promise<void>{
         const dtoInstance = plainToClass(DeleteUserDto, data);
         await validateOrReject(dtoInstance);
 
@@ -87,11 +87,29 @@ class UserService{
         await UserDao.deleteUser(data.id);
     }
 
-    // async getUserTransactions(req: Request, res: Response): Promise<void> {
-    //     const id = req.params.id;
-    //     const transactions = await UserDao.getUserTransactions(id);
-    //     res.json(transactions);
-    // }
+    static async getUserTransactions(data: GetIdDtoUser) {
+        const dtoInstance = plainToClass(GetIdDtoUser, data);
+        await validateOrReject(dtoInstance);
+
+        const existingUser = await UserDao.getUserTransactions(data);
+        if (!existingUser) {
+            throw new Error("Usuário não encontrado.");
+        }
+        return await UserDao.getUserTransactions(data)
+        
+    }
+
+    static async getUserBalance(data: GetIdDtoUser) {
+        const dtoInstance = plainToClass(GetIdDtoUser, data);
+        await validateOrReject(dtoInstance);
+
+        const existingUser = await UserDao.getUserBalance(data);
+        if (!existingUser) {
+            throw new Error("Usuário não encontrado.");
+        }
+        return await UserDao.getUserBalance(data)
+        
+    }
 }
 
 export default UserService;
