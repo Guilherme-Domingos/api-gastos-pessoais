@@ -78,24 +78,28 @@ export class UserDao {
         }
     }
 
-    static async getUserBalance(id: GetIdDtoUser){
-        try {
-            const getUserBalance = await prisma.user.findUnique({
-                where: id, // Adjust DTO structure as needed
+    static async getUserBalance(id: GetIdDtoUser): Promise <number>{
+        try {            
+            const transactions = await prisma.user.findMany({
+                where: id,
                 select: {
                     transactions: {
-                        select: { valor: true }, // Corrected structure
-                    },
-                },
-            });
-    
-            // Calculate total balance from transactions
-            const balance = getUserBalance?.transactions.reduce(
-                (sum, transaction) => sum + transaction.valor,
-                0
-            );
-    
-            return await balance || 0;   	
+                        select: {
+                            tipo: true,
+                            valor: true
+                        }
+                    }
+                }
+
+            })
+
+            const todasTransacoes = transactions.flatMap(user => user.transactions)
+
+            const receitas = todasTransacoes.filter((t) => t.tipo === "receita").reduce((acc, t) => acc + t.valor, 0)
+            
+            const despesas = todasTransacoes.filter((t) => t.tipo === "despesa").reduce((acc, t) => acc + t.valor, 0)
+
+            return receitas - despesas
         }catch (error) {
             throw new Error(`Erro ao buscar transações do usuário: ${error}`);
         }
