@@ -1,71 +1,56 @@
 import { PrismaClient } from '@prisma/client';
 
+import { GetIdDtoTransaction } from '../dto/transaction/GetIdDtoTransaction';
+import { RegisterDtoTransaction } from '../dto/transaction/RegisterDtoTransaction';
+import { UpdateDtoTransaction } from '../dto/transaction/UpdateDtoTransaction';
+import { DeleteDtoTransaction } from '../dto/transaction/DeleteDtoTransaction';
+
 const prisma = new PrismaClient();
 
 export class TransactionDao{
-    public async getAllTransactions() {
+    static async getAllTransactions() {
         try {
             const transactions = await prisma.transaction.findMany();
+            console.log(transactions)
             return transactions; 
         } catch (error) {
             throw new Error(`Erro ao buscar transações: ${error}`);
         }
     }
 
-    public async getIdTransaction(id: string){
+    static async getTransactionById(id: GetIdDtoTransaction){
         try{
-            const transaction = await prisma.transaction.findUnique({where: {id}});
+            const transaction = await prisma.transaction.findUnique({where: id});
             return transaction;
         }catch( erro){
             throw new Error(`Erro ao buscar transação por id: ${erro}`)
         }
     }
 
-    public async registerTransaction(data:{ date: string, remetente: string, categoria: string, valor: number, descricao : string, tipo: string, userId: string }) {
+    static async registerTransaction(transaction: RegisterDtoTransaction) {
         try{
-            const transaction = await prisma.transaction.create({data: 
-                {
-                    date: new Date(),
-                    remetente: data.remetente,
-                    categoria: data.categoria,
-                    valor: data.valor,
-                    descricao: data.descricao,
-                    tipo: data.tipo,
-                    userId: data.userId,
-                }
-            });
 
-            return transaction;
+            return await prisma.transaction.create({data: transaction});
 
         }catch(error){
             throw new Error(`Erro ao criar transação: ${error}`);
         }
     }
 
-    public async updateTransaction(id: string, data:{ date: string, remetente: string, categoria: string, valor: number, descricao : string, tipo: string, userId: string }) {
+    static async updateTransaction(id: GetIdDtoTransaction, updateTransaction: UpdateDtoTransaction) {
         try {
             const transaction = await prisma.transaction.update({
-                where: {
-                    id: id,
-                },
-                data: {
-                    date: data.date,
-                    remetente: data.remetente,
-                    categoria: data.categoria,
-                    valor: data.valor,
-                    descricao: data.descricao,
-                    tipo: data.tipo,
-                    userId: data.userId
-                },
+                where: id,
+                data: updateTransaction,
             });
             return transaction;
         }catch (error) {
             throw new Error(`Erro ao atualizar usuário: ${error}`);
         }
     }
-    public async deleteTransaction( id: string ){
+    static async deleteTransaction( id: DeleteDtoTransaction ){
         try{
-            const transaction = await prisma.transaction.delete({where: {id}});
+            const transaction = await prisma.transaction.delete({where: id});
             return transaction;
         }catch(error){
             throw new Error(`Erro ao deletar transação: ${error}`)

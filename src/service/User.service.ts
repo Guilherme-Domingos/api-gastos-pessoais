@@ -6,10 +6,9 @@ import { UserDao } from "../dao/UserDao";
 
 import { RegisterDtoUser, UserResponseDto, UserListDto } from "../dto/user/RegisterDtoUser";
 import { UpdateDtoUser } from "../dto/user/UpdateDtoUser";
-import { DeleteUserDto } from "../dto/user/DeleteDtoUser";
+import { DeleteDtoUser } from "../dto/user/DeleteDtoUser";
 import { getEmailDtoUser } from "../dto/user/GetEmailDtoUser";
 import { GetIdDtoUser } from "../dto/user/GetIdDtoUser";
-import { TransactionListDto, UserBalance } from "../dto/transaction/RegisterDtoTransaction";
 
 
 class UserService{
@@ -75,16 +74,16 @@ class UserService{
         return updateUser;
     }
 
-    static async deleteUser(data: DeleteUserDto): Promise<void>{
-        const dtoInstance = plainToClass(DeleteUserDto, data);
+    static async deleteUser(data: DeleteDtoUser): Promise<void>{
+        const dtoInstance = plainToClass(DeleteDtoUser, data);
         await validateOrReject(dtoInstance);
 
-        const existingUser = await UserDao.deleteUser(data.id);
+        const existingUser = await UserDao.deleteUser(data);
         if (!existingUser){
             throw new Error("Usuário não encontrado.");
         }
 
-        await UserDao.deleteUser(data.id);
+        await UserDao.deleteUser(data);
     }
 
     static async getUserTransactions(data: GetIdDtoUser) {

@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, } from "class-validator";
 
-export class DeleteDtoTransaction{
+export class GetIdDtoTransaction{
     @IsString()
     @IsNotEmpty()
     id: string;   

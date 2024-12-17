@@ -4,15 +4,13 @@ import UserService from '../service/User.service';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 
-
 import { GetIdDtoUser } from '../dto/user/GetIdDtoUser';
 import { getEmailDtoUser } from '../dto/user/GetEmailDtoUser';
 import { RegisterDtoUser } from '../dto/user/RegisterDtoUser';
 import { UpdateDtoUser } from '../dto/user/UpdateDtoUser';
-import { DeleteUserDto } from '../dto/user/DeleteDtoUser';
+import { DeleteDtoUser } from '../dto/user/DeleteDtoUser';
 
 export class UserController {
-
 
     public async getAllUsers(req: Request, res: Response){
         try {
@@ -85,19 +83,25 @@ export class UserController {
 
     public async updateUser( req: Request, res: Response){
         try{
-            const {id} = req.params;
+            const id = plainToInstance(GetIdDtoUser, req.params)
             
-            const user = plainToInstance(UpdateDtoUser, id);
+            const errorsId = await validate(id);
 
-            const errors = await validate(user);
+            if (errorsId.length > 0) {
+                return res.status(400).json({ error: "Erro de validação ID", details: errorsId });
+            }
+            
+            const updateData = plainToInstance(UpdateDtoUser, req.body);
 
-            if (errors.length > 0) {
-                return res.status(400).json({ error: "Erro de validação", details: errors });
+            const errorsUp = await validate(updateData);
+
+            if (errorsUp.length > 0) {
+                return res.status(400).json({ error: "Erro de validação dados update", details: errorsUp });
             }
 
-            const upUser = await UserService.updateUser({id}, user);
+            const updateUser = await UserService.updateUser(id, updateData);
 
-            return res.status(200).json({ message: 'Usuário atualizado com sucesso',user: upUser });
+            return res.status(200).json({ message: 'Usuário atualizado com sucesso',user: updateUser });
 
         }catch(error: any){
             res.status(500).json({ message: `Erro ao atualizar usuário: ${error}` });
@@ -106,17 +110,15 @@ export class UserController {
 
     public async deleteUser( req: Request, res: Response){
         try {
-            const { id } = req.params;
+            const id = plainToInstance(DeleteDtoUser, req.params);
             
-            const user = plainToInstance(DeleteUserDto, id);
-
-            const errors = await validate(user)
+            const errors = await validate(id)
 
             if (errors.length > 0) {
                 return res.status(400).json({ error: "Erro de validação", details: errors });
             }
 
-            const delUser = await UserService.deleteUser(user)
+            await UserService.deleteUser(id)
 
             return res.status(200).json({message: `Usuário com o ID ${id} foi deletado com sucesso`});
             
@@ -161,3 +163,5 @@ export class UserController {
         }
     }
 }
+
+    

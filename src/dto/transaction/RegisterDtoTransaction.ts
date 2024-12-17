@@ -1,11 +1,18 @@
 import { IsString, IsDateString, IsOptional, IsNumber, IsEnum } from 'class-validator';
 
 export type TransactionListDto = {
-    date: string;
+    date: Date;
     remetente: string;
-    categoria: string;
     valor: number;
     tipo: 'Receita' | 'Despesa';
+}
+
+export class TransactionResponseDto{
+    date: Date
+    remetente: string
+    categoria: string
+    valor: number
+    tipo: string
 }
 
 export type UserBalance = {
@@ -33,6 +40,9 @@ export class RegisterDtoTransaction {
 
     @IsEnum(['Receita', 'Despesa'], {message:"Deve ser escrito conforme mostrado 'Receita' ou 'Despesa' "})
     tipo: 'Receita' | 'Despesa';
+
+    @IsString()
+    userId: string;
 
 }
 

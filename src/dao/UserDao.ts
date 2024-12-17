@@ -1,9 +1,12 @@
 import { PrismaClient } from '@prisma/client';
+
 import { RegisterDtoUser } from '../dto/user/RegisterDtoUser';
 import { UpdateDtoUser } from '../dto/user/UpdateDtoUser';
 import { GetIdDtoUser } from '../dto/user/GetIdDtoUser';
 import { getEmailDtoUser } from '../dto/user/GetEmailDtoUser';
+
 import { TransactionListDto, UserBalance } from '../dto/transaction/RegisterDtoTransaction';
+import { DeleteDtoTransaction } from '../dto/transaction/DeleteDtoTransaction';
 
 const prisma = new PrismaClient();
 
@@ -56,10 +59,10 @@ export class UserDao {
         }
     }
 
-    static async deleteUser( id: string) {
+    static async deleteUser( id: DeleteDtoTransaction) {
         try{
             return await prisma.user.delete({
-                where: { id },
+                where: id ,
             });
         }catch (error) {
             throw new Error(`Erro ao deletar usuário: ${error}`);
