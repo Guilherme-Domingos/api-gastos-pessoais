@@ -5,9 +5,6 @@ import { UpdateDtoUser } from '../dto/user/UpdateDtoUser';
 import { GetIdDtoUser } from '../dto/user/GetIdDtoUser';
 import { getEmailDtoUser } from '../dto/user/GetEmailDtoUser';
 
-import { TransactionListDto, UserBalance } from '../dto/transaction/RegisterDtoTransaction';
-import { DeleteDtoTransaction } from '../dto/transaction/DeleteDtoTransaction';
-
 const prisma = new PrismaClient();
 
 export class UserDao {
@@ -59,10 +56,18 @@ export class UserDao {
         }
     }
 
-    static async deleteUser( id: DeleteDtoTransaction) {
-        try{
+    static async deleteUser(id: GetIdDtoUser) {
+        try {
+            const existingUser = await prisma.user.findUnique({
+                where: { id: id.id },
+            });
+    
+            if (!existingUser) {
+                throw new Error("Usuário não encontrado.");
+            }
+    
             return await prisma.user.delete({
-                where: id ,
+                where: { id: id.id },
             });
         }catch (error) {
             throw new Error(`Erro ao deletar usuário: ${error}`);
@@ -98,9 +103,9 @@ export class UserDao {
 
             const todasTransacoes = transactions.flatMap(user => user.transactions)
 
-            const receitas = todasTransacoes.filter((t) => t.tipo === "receita").reduce((acc, t) => acc + t.valor, 0)
+            const receitas = todasTransacoes.filter((t) => t.tipo === "Receita").reduce((acc, t) => acc + t.valor, 0)
             
-            const despesas = todasTransacoes.filter((t) => t.tipo === "despesa").reduce((acc, t) => acc + t.valor, 0)
+            const despesas = todasTransacoes.filter((t) => t.tipo === "Despesa").reduce((acc, t) => acc + t.valor, 0)
 
             return receitas - despesas
         }catch (error) {

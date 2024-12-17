@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { GetIdDtoTransaction } from '../dto/transaction/GetIdDtoTransaction';
 import { RegisterDtoTransaction } from '../dto/transaction/RegisterDtoTransaction';
 import { UpdateDtoTransaction } from '../dto/transaction/UpdateDtoTransaction';
-import { DeleteDtoTransaction } from '../dto/transaction/DeleteDtoTransaction';
 
 const prisma = new PrismaClient();
 
@@ -27,10 +26,10 @@ export class TransactionDao{
         }
     }
 
-    static async registerTransaction(transaction: RegisterDtoTransaction) {
+    static async registerTransaction(id: RegisterDtoTransaction) {
         try{
 
-            return await prisma.transaction.create({data: transaction});
+            return await prisma.transaction.create({data: id});
 
         }catch(error){
             throw new Error(`Erro ao criar transação: ${error}`);
@@ -48,10 +47,18 @@ export class TransactionDao{
             throw new Error(`Erro ao atualizar usuário: ${error}`);
         }
     }
-    static async deleteTransaction( id: DeleteDtoTransaction ){
+    static async deleteTransaction( id: GetIdDtoTransaction ){
         try{
-            const transaction = await prisma.transaction.delete({where: id});
-            return transaction;
+            const existingTransaction = await prisma.transaction.findUnique({
+                where: { id: id.id },
+            });
+        
+            if (!existingTransaction) {
+                throw new Error("Transação não encontrada.");
+            }
+        
+            return await prisma.transaction.delete({where: {id: id.id}});
+
         }catch(error){
             throw new Error(`Erro ao deletar transação: ${error}`)
         }

@@ -8,7 +8,6 @@ import { GetIdDtoUser } from '../dto/user/GetIdDtoUser';
 import { getEmailDtoUser } from '../dto/user/GetEmailDtoUser';
 import { RegisterDtoUser } from '../dto/user/RegisterDtoUser';
 import { UpdateDtoUser } from '../dto/user/UpdateDtoUser';
-import { DeleteDtoUser } from '../dto/user/DeleteDtoUser';
 
 export class UserController {
 
@@ -110,17 +109,16 @@ export class UserController {
 
     public async deleteUser( req: Request, res: Response){
         try {
-            const id = plainToInstance(DeleteDtoUser, req.params);
-            
+            const id = plainToInstance(GetIdDtoUser, req.params);
             const errors = await validate(id)
 
             if (errors.length > 0) {
-                return res.status(400).json({ error: "Erro de validação", details: errors });
+                return res.status(400).json({ error: "Erro de validação ID", details: errors });
             }
 
             await UserService.deleteUser(id)
 
-            return res.status(200).json({message: `Usuário com o ID ${id} foi deletado com sucesso`});
+            return res.status(200).json({message: `Usuário com o ID ${id.id} foi deletado com sucesso`});
             
         }catch (error: any) {
             res.status(500).json({ message: `Erro ao deletar usuário: ${error.message}` });

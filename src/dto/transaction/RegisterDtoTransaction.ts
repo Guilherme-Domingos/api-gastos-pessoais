@@ -1,6 +1,7 @@
 import { IsString, IsDateString, IsOptional, IsNumber, IsEnum } from 'class-validator';
 
 export type TransactionListDto = {
+    id: string;
     date: Date;
     remetente: string;
     valor: number;
@@ -8,6 +9,7 @@ export type TransactionListDto = {
 }
 
 export class TransactionResponseDto{
+    id: string
     date: Date
     remetente: string
     categoria: string

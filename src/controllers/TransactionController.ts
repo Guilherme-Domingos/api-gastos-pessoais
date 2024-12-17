@@ -5,11 +5,9 @@ import TransactionService from '../service/Transaction.service';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 
-import { RegisterDtoTransaction, TransactionListDto, TransactionResponseDto } from "../dto/transaction/RegisterDtoTransaction";
+import { RegisterDtoTransaction } from "../dto/transaction/RegisterDtoTransaction";
 import { GetIdDtoTransaction } from "../dto/transaction/GetIdDtoTransaction";
 import { UpdateDtoTransaction } from "../dto/transaction/UpdateDtoTransaction";
-import { DeleteDtoTransaction } from "../dto/transaction/DeleteDtoTransaction";
-import UserService from '../service/User.service';
 
 
 
@@ -62,7 +60,7 @@ export class TransactionController{
             
             const newTransaction = await TransactionService.registerTransaction(transaction);
 
-            return res.status(201).json({message: `Transação registrado com sucesso`,user: newTransaction,});
+            return res.status(201).json({message: `Transação registrado com sucesso`,transaction: newTransaction,});
         }
         catch (error) {
             console.error(error)
@@ -98,23 +96,23 @@ export class TransactionController{
         }
     }
 
-    async deleteTransaction( req: Request, res: Response) {
-        try{
-            const id = plainToInstance(DeleteDtoTransaction, req.params)
-
-            const errors = await validate(id)
-
+    async deleteTransaction(req: Request, res: Response) {
+        try {
+            const id = plainToInstance(GetIdDtoTransaction, req.params);
+            const errors = await validate(id);
+    
             if (errors.length > 0) {
-                return res.status(400).json({ error: "Erro de validação ID", details: errors });
+                return res.status(400).json({ error: "Erro de validação do ID", details: errors });
             }
-
+    
             await TransactionService.deleteTransaction(id);
-
-            return res.status(200).json({message: `Transação com o ID ${id} foi deletada com sucesso`});
-
-        }catch(error){
-            console.error(error)
-            res.status(500).json({message: `Erro ao deletar transação ${error}`})
+    
+            return res.status(200).json({message: `Transação com o ID ${id.id} foi deletada com sucesso`,});
+        } catch (error: any) {
+            console.error(error);
+            return res.status(500).json({
+                message: `Erro ao deletar transação: ${error.message}`,
+            });
         }
     }
 

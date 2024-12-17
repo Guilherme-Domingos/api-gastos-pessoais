@@ -7,13 +7,13 @@ import { TransactionDao } from "../dao/TransactionDao";
 import { RegisterDtoTransaction, TransactionListDto, TransactionResponseDto } from "../dto/transaction/RegisterDtoTransaction";
 import { GetIdDtoTransaction } from "../dto/transaction/GetIdDtoTransaction";
 import { UpdateDtoTransaction } from "../dto/transaction/UpdateDtoTransaction";
-import { DeleteDtoTransaction } from "../dto/transaction/DeleteDtoTransaction";
 
 class TransactionService{
 
     static async getAllTransactions(): Promise<TransactionListDto[]>{
         const transactions = await TransactionDao.getAllTransactions();
         return transactions.map((transaction) => ({
+            id: transaction.id,
             date: transaction.date,
             remetente: transaction.remetente,
             valor: transaction.valor,
@@ -57,16 +57,16 @@ class TransactionService{
         return updateTransaction;
     }
 
-    static async deleteTransaction(data: DeleteDtoTransaction): Promise<void>{
-        const dtoInstance = plainToClass(DeleteDtoTransaction, data);
+    static async deleteTransaction(id: GetIdDtoTransaction): Promise<void>{
+        const dtoInstance = plainToClass(GetIdDtoTransaction, id);
         await validateOrReject(dtoInstance);
 
-        const existingUser = await TransactionDao.deleteTransaction(data);
-        if (!existingUser){
-            throw new Error("Transação não encontrada.");
+        const existingTransaction = await TransactionDao.deleteTransaction(id);
+        if (!existingTransaction){
+            throw new Error("Transação não encontrado.");
         }
 
-        await TransactionDao.deleteTransaction(data);
+        await TransactionDao.deleteTransaction(id);
     }
 
 }
